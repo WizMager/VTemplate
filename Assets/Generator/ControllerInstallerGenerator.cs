@@ -8,12 +8,13 @@ namespace Generator
     {
         public static string GetInstaller(
             string name,
-            string ns,
+            string usings,
             string methods,
-            string body
+            string body,
+            string nameSpace
         )
         {
-            return $@"{ns}
+            return $@"{usings}
 using VContainer;
 using VContainer.Unity;
 
@@ -26,7 +27,8 @@ using VContainer.Unity;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Game
+namespace {nameSpace}
+
 {{
 	public class {name} : LifetimeScope
     {{
@@ -51,14 +53,19 @@ namespace Game
             return $"\t\tprivate void {name}(IContainerBuilder builder)\n\t\t{{{body}\t\t}}";
         }
 
-        public static string GenerateInstaller(string name, Dictionary<Enum, List<TypeElement>> container, List<string> nameSpaces)
+        public static string GenerateInstaller(
+            string name, 
+            Dictionary<Enum, List<TypeElement>> container, 
+            List<string> nameSpaces, 
+            string nameSpace
+        )
         {
             var nameSpacesSorted = nameSpaces
                 .Distinct()
                 .Where(nameSpace => !string.IsNullOrWhiteSpace(nameSpace) && nameSpace != "Generator")
                 .OrderBy(nameSpace => nameSpace);
 
-            var builtNameSpaces = string.Join("\n", nameSpacesSorted.Select(s => "using " + s + ";"));
+            var usings = string.Join("\n", nameSpacesSorted.Select(s => "using " + s + ";"));
 
             var notEmptyTypes = container.Select(kvp => new
                 {
@@ -75,7 +82,7 @@ namespace Game
             var body = notEmptyTypes.Select(s => GetMethodBody(s.methodName, string.Join("\n", s.binds) + "\n"));
             var builtBody = string.Join("\n\n", body);
 
-            return GetInstaller(name, builtNameSpaces, builtCalls, builtBody);
+            return GetInstaller(name, usings, builtCalls, builtBody, nameSpace);
         }
     }
 }

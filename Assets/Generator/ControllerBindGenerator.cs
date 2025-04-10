@@ -8,12 +8,12 @@ namespace Generator
     {
         private static string GetBind(TypeElement type)
         {
-            return $"\t\t\tbuilder.Register<{type.Type.Name}>(Lifetime.Singleton).AsImplementedInterfaces();\t// {type.Order:0000}";
+            return $"\t\t\tbuilder.Register<{type.TypeName}>(Lifetime.Singleton).AsImplementedInterfaces();\t// {type.Order:0000}";
         }
         
         public static IEnumerable<string> GetBinds(IEnumerable<TypeElement> types)
         {
-            types = types.OrderBy(t => t.Order).ThenBy(t => t.Type.Name);
+            types = types.OrderBy(t => t.Order).ThenBy(t => t.TypeName);
 
             var previous = 100000;
             foreach (var t in types)

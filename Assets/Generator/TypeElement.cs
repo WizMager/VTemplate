@@ -1,18 +1,20 @@
-﻿using System;
-
-namespace Generator
+﻿namespace Generator
 {
     public class TypeElement
     {
-        public readonly Type Type;
+        public readonly string TypeName;
         public readonly EExecutionPriority Priority;
         public readonly int Order;
 
-        public TypeElement(Type type, InstallAttribute attribute)
+        public TypeElement(
+            string typeName, 
+            EExecutionPriority priority, 
+            int order
+        )
         {
-            Type = type;
-            Priority = attribute.Priority;
-            Order = attribute.Order;
+            TypeName = typeName;
+            Priority = priority;
+            Order = order;
         }
     }
 }
